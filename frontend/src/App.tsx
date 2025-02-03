@@ -1,16 +1,11 @@
+import { Refine, WelcomePage } from "@refinedev/core";
 
-import { Admin, Resource, ListGuesser, EditGuesser, ShowGuesser } from 'react-admin';
-import { Layout } from './Layout';
-import { dataProvider } from './dataProvider';
+function App() {
+  return (
+    <Refine>
+      <WelcomePage />
+    </Refine>
+  );
+}
 
-
-export const App = () => (
-    <Admin
-        dataProvider={dataProvider}
-        layout={Layout}
-        >
-        <Resource name="articles" list={ListGuesser}/>
-    </Admin>
-);
-
-    
+export default App;
