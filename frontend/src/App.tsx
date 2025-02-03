@@ -1,11 +1,12 @@
-import { Refine, WelcomePage } from "@refinedev/core";
+import { Refine } from "@refinedev/core";
 
-function App() {
+import { dataProvider } from "./providers/data-provider";
+import { ShowArticle } from "./pages/articles/show";
+
+export default function App(): JSX.Element {
   return (
-    <Refine>
-      <WelcomePage />
+    <Refine dataProvider={dataProvider}>
+        <ShowArticle />
     </Refine>
   );
 }
-
-export default App;
