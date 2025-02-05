@@ -4,7 +4,7 @@ import { Edit, useAutocomplete } from "@refinedev/mui";
 import { useForm } from "@refinedev/react-hook-form";
 import { Controller } from "react-hook-form";
 
-export const BlogPostEdit = () => {
+export const ArticleEdit = () => {
   const {
     saveButtonProps,
     refineCore: { queryResult, formLoading },
@@ -13,11 +13,11 @@ export const BlogPostEdit = () => {
     formState: { errors },
   } = useForm({});
 
-  const blogPostsData = queryResult?.data?.data;
+  const articlesData = queryResult?.data?.data;
 
   const { autocompleteProps: categoryAutocompleteProps } = useAutocomplete({
     resource: "categories",
-    defaultValue: blogPostsData?.category?.id,
+    defaultValue: articlesData?.category?.id,
   });
 
   return (

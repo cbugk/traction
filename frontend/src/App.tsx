@@ -28,11 +28,11 @@ import { Header } from "./components/header";
 import { ColorModeContextProvider } from "./contexts/color-mode";
 import { CredentialResponse } from "./interfaces/google";
 import {
-  BlogPostCreate,
-  BlogPostEdit,
-  BlogPostList,
-  BlogPostShow,
-} from "./pages/blog-posts";
+  ArticleCreate,
+  ArticleEdit,
+  ArticleList,
+  ArticleShow,
+} from "./pages/articles";
 import {
   CategoryCreate,
   CategoryEdit,
@@ -138,17 +138,17 @@ function App() {
           <RefineSnackbarProvider>
             <DevtoolsProvider>
               <Refine
-                dataProvider={dataProvider("https://api.fake-rest.refine.dev")}
+                dataProvider={dataProvider("http://localhost:5150/api")}
                 notificationProvider={useNotificationProvider}
                 routerProvider={routerBindings}
                 authProvider={authProvider}
                 resources={[
                   {
-                    name: "blog_posts",
-                    list: "/blog-posts",
-                    create: "/blog-posts/create",
-                    edit: "/blog-posts/edit/:id",
-                    show: "/blog-posts/show/:id",
+                    name: "articles",
+                    list: "/articles",
+                    create: "/articles",
+                    edit: "/articles",
+                    show: "/articles",
                     meta: {
                       canDelete: true,
                     },
@@ -186,13 +186,13 @@ function App() {
                   >
                     <Route
                       index
-                      element={<NavigateToResource resource="blog_posts" />}
+                      element={<NavigateToResource resource="articles" />}
                     />
-                    <Route path="/blog-posts">
-                      <Route index element={<BlogPostList />} />
-                      <Route path="create" element={<BlogPostCreate />} />
-                      <Route path="edit/:id" element={<BlogPostEdit />} />
-                      <Route path="show/:id" element={<BlogPostShow />} />
+                    <Route path="/articles">
+                      <Route index element={<ArticleList />} />
+                      <Route path="create" element={<ArticleCreate />} />
+                      <Route path="edit/:id" element={<ArticleEdit />} />
+                      <Route path="show/:id" element={<ArticleShow />} />
                     </Route>
                     <Route path="/categories">
                       <Route index element={<CategoryList />} />

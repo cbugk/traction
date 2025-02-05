@@ -11,7 +11,7 @@ import {
 } from "@refinedev/mui";
 import React from "react";
 
-export const BlogPostList = () => {
+export const ArticleList = () => {
   const { dataGridProps } = useDataGrid({});
 
   const { data: categoryData, isLoading: categoryIsLoading } = useMany({
