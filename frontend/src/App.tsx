@@ -27,18 +27,6 @@ import { BrowserRouter, Outlet, Route, Routes } from "react-router";
 import { Header } from "./components/header";
 import { ColorModeContextProvider } from "./contexts/color-mode";
 import { CredentialResponse } from "./interfaces/google";
-import {
-  ArticleCreate,
-  ArticleEdit,
-  ArticleList,
-  ArticleShow,
-} from "./pages/articles";
-import {
-  CategoryCreate,
-  CategoryEdit,
-  CategoryList,
-  CategoryShow,
-} from "./pages/categories";
 import { Login } from "./pages/login";
 import { parseJwt } from "./utils/parse-jwt";
 
@@ -130,7 +118,7 @@ function App() {
   };
 
   return (
-    <BrowserRouter>
+    (<BrowserRouter>
       <RefineKbarProvider>
         <ColorModeContextProvider>
           <CssBaseline />
@@ -142,28 +130,13 @@ function App() {
                 notificationProvider={useNotificationProvider}
                 routerProvider={routerBindings}
                 authProvider={authProvider}
-                resources={[
-                  {
-                    name: "articles",
-                    list: "/articles",
-                    create: "/articles",
-                    edit: "/articles",
-                    show: "/articles",
-                    meta: {
-                      canDelete: true,
-                    },
-                  },
-                  {
-                    name: "categories",
-                    list: "/categories",
-                    create: "/categories/create",
-                    edit: "/categories/edit/:id",
-                    show: "/categories/show/:id",
-                    meta: {
-                      canDelete: true,
-                    },
-                  },
-                ]}
+                resources={[{
+                  name: "item",
+                  list: "/item/list",
+                  create: "/item/create",
+                  edit: "/item/:id",
+                  show: "/item/:id",
+                }]}
                 options={{
                   syncWithLocation: true,
                   warnWhenUnsavedChanges: true,
@@ -184,22 +157,6 @@ function App() {
                       </Authenticated>
                     }
                   >
-                    <Route
-                      index
-                      element={<NavigateToResource resource="articles" />}
-                    />
-                    <Route path="/articles">
-                      <Route index element={<ArticleList />} />
-                      <Route path="create" element={<ArticleCreate />} />
-                      <Route path="edit/:id" element={<ArticleEdit />} />
-                      <Route path="show/:id" element={<ArticleShow />} />
-                    </Route>
-                    <Route path="/categories">
-                      <Route index element={<CategoryList />} />
-                      <Route path="create" element={<CategoryCreate />} />
-                      <Route path="edit/:id" element={<CategoryEdit />} />
-                      <Route path="show/:id" element={<CategoryShow />} />
-                    </Route>
                     <Route path="*" element={<ErrorComponent />} />
                   </Route>
                   <Route
@@ -225,7 +182,7 @@ function App() {
           </RefineSnackbarProvider>
         </ColorModeContextProvider>
       </RefineKbarProvider>
-    </BrowserRouter>
+    </BrowserRouter>)
   );
 }
 
