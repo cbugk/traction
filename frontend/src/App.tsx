@@ -27,6 +27,12 @@ import {
   ArticleShow,
 } from "./pages/articles";
 import {
+  ItemCreate,
+  ItemEdit,
+  ItemList,
+  ItemShow,
+} from "./pages/items";
+import {
   UserCreate,
   UserEdit,
   UserList,
@@ -67,24 +73,34 @@ function App() {
                 i18nProvider={i18nProvider}
                 resources={[
                   {
+                    name: "articles",
+                    list: "/articles",
+                    create: "/articles",
+                    edit: "/articles/edit/:id",
+                    show: "/articles/show/:id",
+                    meta: {
+                      canDelete: true,
+                    },
+                  },
+                  {
+                    name: "items",
+                    list: "/items",
+                    create: "/items",
+                    edit: "/items/edit/:id",
+                    show: "/items/show/:id",
+                    meta: {
+                      canDelete: true,
+                    },
+                  },
+                  {
                     name: "users",
                     list: "/users",
-                    create: "/users/create",
+                    create: "/users",
                     edit: "/users/edit/:id",
                     show: "/users/show/:id",
                     meta: {
                       canDelete: true,
                       icon: <UserOutlined style={{ fontSize: '16px', color: '#08c' }} />,
-                    },
-                  },
-                  {
-                    name: "articles",
-                    list: "/articles",
-                    create: "/articles/create",
-                    edit: "/articles/edit/:id",
-                    show: "/articles/show/:id",
-                    meta: {
-                      canDelete: true,
                     },
                   },
                 ]}
@@ -105,7 +121,7 @@ function App() {
                                     collapsed={collapsed}
                                     // Adjust to different logo when collapsed, if needed
                                     icon={collapsed ? <HeaderLogo /> : <HeaderLogo />}
-                                    text='Poliath Manager' // App title if needed
+                                    text='Traction' // App title if needed
                                 />
                             )}
                             Header={() => <Header sticky />}
@@ -118,19 +134,25 @@ function App() {
                 >
                   <Route
                       index
-                      element={<NavigateToResource resource="articles" />}
+                      element={<NavigateToResource resource="/" />}
                   />
-                  <Route path="/users">
-                    <Route index element={<UserList />} />
-                    <Route path="create" element={<UserCreate />} />
-                    <Route path="edit/:id" element={<UserEdit />} />
-                    <Route path="show/:id" element={<UserShow />} />
-                  </Route>
                   <Route path="/articles">
                     <Route index element={<ArticleList />} />
                     <Route path="create" element={<ArticleCreate />} />
                     <Route path="edit/:id" element={<ArticleEdit />} />
                     <Route path="show/:id" element={<ArticleShow />} />
+                  </Route>
+                  <Route path="/items">
+                    <Route index element={<ItemList />} />
+                    <Route path="create" element={<ItemCreate />} />
+                    <Route path="edit/:id" element={<ItemEdit />} />
+                    <Route path="show/:id" element={<ItemShow />} />
+                  </Route>
+                  <Route path="/users">
+                    <Route index element={<UserList />} />
+                    <Route path="create" element={<UserCreate />} />
+                    <Route path="edit/:id" element={<UserEdit />} />
+                    <Route path="show/:id" element={<UserShow />} />
                   </Route>
                   <Route path="*" element={<ErrorComponent />} />
                 </Route>
