@@ -9,6 +9,11 @@ It also include configuration sections that help you pick either a frontend or a
 ## Quick Start
 
 ```sh
+#cd frontend; pnpm i; cd ..
+(cd frontend/ && pnpm run build && cd .. && cargo loco start)
+```
+
+```sh
 cargo loco start
 ```
 
