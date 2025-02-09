@@ -1,49 +1,47 @@
-# traction
+# refine.dev - Nest.js API boilerplate 🇭🇷
 
-<div align="center" style="margin: 30px;">
-    <a href="https://refine.dev">
-    <img alt="refine logo" src="https://refine.ams3.cdn.digitaloceanspaces.com/readme/refine-readme-banner.png">
-    </a>
-</div>
-<br/>
 
-This [Refine](https://github.com/refinedev/refine) project was generated with [create refine-app](https://github.com/refinedev/refine/tree/master/packages/create-refine-app).
+This project was build using [refine](https://github.com/refinedev/refine). This is a boilerplate for [Nest.js API boilerplate](https://github.com/poliath/nestjs-poliath-boilerplate) project. 
 
-## Getting Started
+## Detailed Quick start guide
+Detailed quick start guide is available [HERE](https://github.com/poliath/nestjs-poliath-boilerplate/blob/master/QUICK_START_GUIDE.md)
 
-A React Framework for building internal tools, admin panels, dashboards & B2B apps with unmatched flexibility ✨
+## Features
 
-Refine's hooks and components simplifies the development process and eliminates the repetitive tasks by providing industry-standard solutions for crucial aspects of a project, including authentication, access control, routing, networking, state management, and i18n.
+- [x] Authentication pages (Login, Register, Forgot password, Reset password, Confirm email)
+- [x] RBAC using [casbin](https://github.com/casbin/casbin) - (admin, user, viewer)
+- [x] i18n (English and Croatian as example)
+- [x] User management (for admin) - CRUD operations 
+- [x] Articles management (for user and admin) - CRUD operations
+- [x] Ant Design theme
 
 ## Available Scripts
 
 ### Running the development server.
 
 ```bash
-    pnpm dev
+    npm run dev
 ```
 
 ### Building for production.
 
 ```bash
-    pnpm build
+    npm run build
 ```
 
 ### Running the production server.
 
 ```bash
-    pnpm start
+    npm run start
 ```
 
-## Learn More
+## Learn More about refine
 
-To learn more about **Refine**, please check out the [Documentation](https://refine.dev/docs)
+To learn more about **refine**, please check out the [Documentation](https://refine.dev/docs)
 
-- **REST Data Provider** [Docs](https://refine.dev/docs/core/providers/data-provider/#overview)
-- **Material UI** [Docs](https://refine.dev/docs/ui-frameworks/mui/tutorial/)
+- **NestJS Data Provider** [Docs](https://refine.dev/docs/core/providers/data-provider/#overview)
+- **Ant Design** [Docs](https://refine.dev/docs/ui-frameworks/antd/tutorial/)
+- **Inferencer** [Docs](https://refine.dev/docs/packages/documentation/inferencer)
 - **React Router** [Docs](https://refine.dev/docs/core/providers/router-provider/)
-- **Google Auth Provider** [Docs](https://refine.dev/docs/core/providers/auth-provider/)
-
-## License
-
-MIT
+- **Custom Auth Provider** [Docs](https://refine.dev/docs/core/providers/auth-provider/)
+- **i18n** [Docs](https://refine.dev/docs/core/providers/i18n-provider/)

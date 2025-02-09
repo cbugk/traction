@@ -1,188 +1,161 @@
-import {
-  AuthBindings,
-  Authenticated,
-  Refine,
-} from "@refinedev/core";
-import { DevtoolsPanel, DevtoolsProvider } from "@refinedev/devtools";
+import {Authenticated, GitHubBanner, HttpError, Refine, useTranslate} from "@refinedev/core";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
 
 import {
   ErrorComponent,
-  RefineSnackbarProvider,
+  notificationProvider,
   ThemedLayoutV2,
-  useNotificationProvider,
-} from "@refinedev/mui";
+  ThemedSiderV2, ThemedTitleV2,
+} from "@refinedev/antd";
+import "@refinedev/antd/dist/reset.css";
 
-import CssBaseline from "@mui/material/CssBaseline";
-import GlobalStyles from "@mui/material/GlobalStyles";
 import routerBindings, {
   CatchAllNavigate,
   DocumentTitleHandler,
   NavigateToResource,
   UnsavedChangesNotifier,
-} from "@refinedev/react-router";
-import dataProvider from "@refinedev/simple-rest";
-import axios from "axios";
-import { BrowserRouter, Outlet, Route, Routes } from "react-router";
+} from "@refinedev/react-router-v6";
+import { useTranslation } from "react-i18next";
+import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
+import { authProvider } from "./providers/authProvider";
 import { Header } from "./components/header";
 import { ColorModeContextProvider } from "./contexts/color-mode";
-import { CredentialResponse } from "./interfaces/google";
+import {
+  ArticleCreate,
+  ArticleEdit,
+  ArticleList,
+  ArticleShow,
+} from "./pages/articles";
+import {
+  UserCreate,
+  UserEdit,
+  UserList,
+  UserShow,
+} from "./pages/users";
+import { ForgotPassword } from "./pages/forgotPassword";
 import { Login } from "./pages/login";
-import { parseJwt } from "./utils/parse-jwt";
-
-const axiosInstance = axios.create();
-axiosInstance.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
-  if (config.headers) {
-    config.headers["Authorization"] = `Bearer ${token}`;
-  }
-
-  return config;
-});
+import { Register } from "./pages/register";
+import {accessControlProvider} from "./providers/accessControlProvider";
+import {ConfirmEmailPage} from "./pages/confirmEmail/confirmEmail";
+import {UserOutlined} from "@ant-design/icons";
+import nestjsxCrudDataProviderCustom from "./providers/nestjsx-crud";
+import {UpdatePasswordPage} from "./pages/updatePassword/updatePassword";
+import HeaderLogo from "./components/HeaderLogo";
+import {API_URL} from "./constants";
 
 function App() {
-  const authProvider: AuthBindings = {
-    login: async ({ credential }: CredentialResponse) => {
-      const profileObj = credential ? parseJwt(credential) : null;
+  const { t, i18n } = useTranslation();
 
-      if (profileObj) {
-        localStorage.setItem(
-          "user",
-          JSON.stringify({
-            ...profileObj,
-            avatar: profileObj.picture,
-          })
-        );
+  const dataProvider = nestjsxCrudDataProviderCustom(API_URL);
 
-        localStorage.setItem("token", `${credential}`);
-
-        return {
-          success: true,
-          redirectTo: "/",
-        };
-      }
-
-      return {
-        success: false,
-      };
-    },
-    logout: async () => {
-      const token = localStorage.getItem("token");
-
-      if (token && typeof window !== "undefined") {
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-        axios.defaults.headers.common = {};
-        window.google?.accounts.id.revoke(token, () => {
-          return {};
-        });
-      }
-
-      return {
-        success: true,
-        redirectTo: "/login",
-      };
-    },
-    onError: async (error) => {
-      console.error(error);
-      return { error };
-    },
-    check: async () => {
-      const token = localStorage.getItem("token");
-
-      if (token) {
-        return {
-          authenticated: true,
-        };
-      }
-
-      return {
-        authenticated: false,
-        error: {
-          message: "Check failed",
-          name: "Token not found",
-        },
-        logout: true,
-        redirectTo: "/login",
-      };
-    },
-    getPermissions: async () => null,
-    getIdentity: async () => {
-      const user = localStorage.getItem("user");
-      if (user) {
-        return JSON.parse(user);
-      }
-
-      return null;
-    },
+  const i18nProvider = {
+    translate: (key: string, params: object) => t(key, params),
+    changeLocale: (lang: string) => i18n.changeLanguage(lang),
+    getLocale: () => i18n.language,
   };
 
   return (
-    (<BrowserRouter>
-      <RefineKbarProvider>
-        <ColorModeContextProvider>
-          <CssBaseline />
-          <GlobalStyles styles={{ html: { WebkitFontSmoothing: "auto" } }} />
-          <RefineSnackbarProvider>
-            <DevtoolsProvider>
-              <Refine
-                dataProvider={dataProvider("http://localhost:5150/api")}
-                notificationProvider={useNotificationProvider}
+      <BrowserRouter>
+        <RefineKbarProvider>
+          <ColorModeContextProvider>
+            <Refine
+                dataProvider={dataProvider}
+                notificationProvider={notificationProvider}
                 routerProvider={routerBindings}
                 authProvider={authProvider}
-                resources={[{
-                  name: "item",
-                  list: "/item/list",
-                  create: "/item/create",
-                  edit: "/item/:id",
-                  show: "/item/:id",
-                }]}
+                accessControlProvider={accessControlProvider}
+                i18nProvider={i18nProvider}
+                resources={[
+                  {
+                    name: "users",
+                    list: "/users",
+                    create: "/users/create",
+                    edit: "/users/edit/:id",
+                    show: "/users/show/:id",
+                    meta: {
+                      canDelete: true,
+                      icon: <UserOutlined style={{ fontSize: '16px', color: '#08c' }} />,
+                    },
+                  },
+                  {
+                    name: "articles",
+                    list: "/articles",
+                    create: "/articles/create",
+                    edit: "/articles/edit/:id",
+                    show: "/articles/show/:id",
+                    meta: {
+                      canDelete: true,
+                    },
+                  },
+                ]}
                 options={{
+                  disableTelemetry: true,
                   syncWithLocation: true,
                   warnWhenUnsavedChanges: true,
-                  useNewQueryKeys: true,
-                  projectId: "6N5Lbz-f55W4L-KDldmC",
                 }}
-              >
-                <Routes>
-                  <Route
+            >
+              <Routes>
+                <Route
                     element={
-                      <Authenticated
-                        key="authenticated-inner"
-                        fallback={<CatchAllNavigate to="/login" />}
-                      >
-                        <ThemedLayoutV2 Header={Header}>
+                      // <Authenticated fallback={<CatchAllNavigate to="/login" />}>
+                        <ThemedLayoutV2
+                            Title={({ collapsed }) => (
+                                <ThemedTitleV2
+                                    // collapsed is a boolean value that indicates whether the <Sidebar> is collapsed or not
+                                    collapsed={collapsed}
+                                    // Adjust to different logo when collapsed, if needed
+                                    icon={collapsed ? <HeaderLogo /> : <HeaderLogo />}
+                                    text='Poliath Manager' // App title if needed
+                                />
+                            )}
+                            Header={() => <Header sticky />}
+                            Sider={(props) => <ThemedSiderV2 {...props} fixed />}
+                        >
                           <Outlet />
                         </ThemedLayoutV2>
-                      </Authenticated>
+                      // </Authenticated>
                     }
-                  >
-                    <Route path="*" element={<ErrorComponent />} />
-                  </Route>
+                >
                   <Route
+                      index
+                      element={<NavigateToResource resource="articles" />}
+                  />
+                  <Route path="/users">
+                    <Route index element={<UserList />} />
+                    <Route path="create" element={<UserCreate />} />
+                    <Route path="edit/:id" element={<UserEdit />} />
+                    <Route path="show/:id" element={<UserShow />} />
+                  </Route>
+                  <Route path="/articles">
+                    <Route index element={<ArticleList />} />
+                    <Route path="create" element={<ArticleCreate />} />
+                    <Route path="edit/:id" element={<ArticleEdit />} />
+                    <Route path="show/:id" element={<ArticleShow />} />
+                  </Route>
+                  <Route path="*" element={<ErrorComponent />} />
+                </Route>
+                {/* <Route
                     element={
-                      <Authenticated
-                        key="authenticated-outer"
-                        fallback={<Outlet />}
-                      >
+                      <Authenticated fallback={<Outlet />}>
                         <NavigateToResource />
                       </Authenticated>
                     }
-                  >
-                    <Route path="/login" element={<Login />} />
-                  </Route>
-                </Routes>
+                >
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/register" element={<Register />} />
+                  <Route path="/forgot-password" element={<ForgotPassword />} />
+                  <Route path="/password-change/:id" element={<UpdatePasswordPage />} />
+                  <Route path="/confirm-email/:id" element={<ConfirmEmailPage />} />
+                </Route> */}
+              </Routes>
 
-                <RefineKbar />
-                <UnsavedChangesNotifier />
-                <DocumentTitleHandler />
-              </Refine>
-              <DevtoolsPanel />
-            </DevtoolsProvider>
-          </RefineSnackbarProvider>
-        </ColorModeContextProvider>
-      </RefineKbarProvider>
-    </BrowserRouter>)
+              <RefineKbar />
+              <UnsavedChangesNotifier />
+              <DocumentTitleHandler />
+            </Refine>
+          </ColorModeContextProvider>
+        </RefineKbarProvider>
+      </BrowserRouter>
   );
 }
 

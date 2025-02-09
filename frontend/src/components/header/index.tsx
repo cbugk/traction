@@ -1,80 +1,93 @@
-import DarkModeOutlined from "@mui/icons-material/DarkModeOutlined";
-import LightModeOutlined from "@mui/icons-material/LightModeOutlined";
-import AppBar from "@mui/material/AppBar";
-import Avatar from "@mui/material/Avatar";
-import IconButton from "@mui/material/IconButton";
-import Stack from "@mui/material/Stack";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import { useGetIdentity } from "@refinedev/core";
-import { HamburgerMenu, RefineThemedLayoutV2HeaderProps } from "@refinedev/mui";
+import { DownOutlined } from "@ant-design/icons";
+import type { RefineThemedLayoutV2HeaderProps } from "@refinedev/antd";
+import { useGetIdentity, useGetLocale, useSetLocale } from "@refinedev/core";
+import {
+  Layout as AntdLayout,
+  Avatar,
+  Button,
+  Dropdown,
+  MenuProps,
+  Space,
+  Switch,
+  Typography,
+  theme,
+} from "antd";
 import React, { useContext } from "react";
+import { useTranslation } from "react-i18next";
 import { ColorModeContext } from "../../contexts/color-mode";
+import {IUser} from "../../interfaces/user.interface";
 
-type IUser = {
-  id: number;
-  name: string;
-  avatar: string;
-};
+const { Text } = Typography;
+const { useToken } = theme;
 
 export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
-  sticky = true,
+  sticky,
 }) => {
+  const { token } = useToken();
+  const { i18n } = useTranslation();
+  const locale = useGetLocale();
+  const changeLanguage = useSetLocale();
+  const { data: user } = useGetIdentity<IUser>();
   const { mode, setMode } = useContext(ColorModeContext);
 
-  const { data: user } = useGetIdentity<IUser>();
+  const currentLocale = locale();
+
+  const menuItems: MenuProps["items"] = [...(i18n.languages || [])]
+    .sort()
+    .map((lang: string) => ({
+      key: lang,
+      onClick: () => changeLanguage(lang),
+      icon: (
+        <span style={{ marginRight: 8 }}>
+          <Avatar size={16} src={`/images/flags/${lang}.svg`} />
+        </span>
+      ),
+      label: lang === "en" ? "English" : "Hrvatski",
+    }));
+
+  const headerStyles: React.CSSProperties = {
+    backgroundColor: token.colorBgElevated,
+    display: "flex",
+    justifyContent: "flex-end",
+    alignItems: "center",
+    padding: "0px 24px",
+    height: "64px",
+  };
+
+  if (sticky) {
+    headerStyles.position = "sticky";
+    headerStyles.top = 0;
+    headerStyles.zIndex = 1;
+  }
 
   return (
-    <AppBar position={sticky ? "sticky" : "relative"}>
-      <Toolbar>
-        <Stack
-          direction="row"
-          width="100%"
-          justifyContent="flex-end"
-          alignItems="center"
+    <AntdLayout.Header style={headerStyles}>
+      <Space>
+        <Dropdown
+          menu={{
+            items: menuItems,
+            selectedKeys: currentLocale ? [currentLocale] : [],
+          }}
         >
-          <HamburgerMenu />
-          <Stack
-            direction="row"
-            width="100%"
-            justifyContent="flex-end"
-            alignItems="center"
-          >
-            <IconButton
-              color="inherit"
-              onClick={() => {
-                setMode();
-              }}
-            >
-              {mode === "dark" ? <LightModeOutlined /> : <DarkModeOutlined />}
-            </IconButton>
-
-            {(user?.avatar || user?.name) && (
-              <Stack
-                direction="row"
-                gap="16px"
-                alignItems="center"
-                justifyContent="center"
-              >
-                {user?.name && (
-                  <Typography
-                    sx={{
-                      display: {
-                        xs: "none",
-                        sm: "inline-block",
-                      },
-                    }}
-                    variant="subtitle2"
-                  >
-                    {user?.name}
-                  </Typography>
-                )}
-                <Avatar src={user?.avatar} alt={user?.name} />
-              </Stack>
-            )}
-          </Stack>
-        </Stack>
-      </Toolbar>
-    </AppBar>
+          <Button type="text">
+            <Space>
+              <Avatar size={16} src={`/images/flags/${currentLocale}.svg`} />
+              {currentLocale === "en" ? "English" : "Hrvatski"}
+              <DownOutlined />
+            </Space>
+          </Button>
+        </Dropdown>
+        <Switch
+          checkedChildren="🌛"
+          unCheckedChildren="🔆"
+          onChange={() => setMode(mode === "light" ? "dark" : "light")}
+          defaultChecked={mode === "dark"}
+        />
+        <Space style={{ marginLeft: "8px" }} size="middle">
+          {user?.name && <Text strong>{user.name}</Text>}
+          {user?.avatar && <Avatar src={user?.avatar} alt={user?.name} />}
+        </Space>
+      </Space>
+    </AntdLayout.Header>
   );
 };
